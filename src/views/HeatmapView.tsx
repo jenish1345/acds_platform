@@ -1,6 +1,6 @@
 import React from 'react';
 import { DepartmentHeatmap } from '../components/Heatmap/DepartmentHeatmap';
-import { departmentRisks, alerts } from '../data/mockData';
+import { departmentRisks } from '../data/mockData';
 
 export const HeatmapView: React.FC = () => {
   const criticalCount = departmentRisks.filter(d => d.riskLevel === 'critical').length;

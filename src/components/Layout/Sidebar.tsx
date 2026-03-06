@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, AlertTriangle, Search, TrendingUp, FileText, Grid, BarChart3, CreditCard, DollarSign, Upload } from 'lucide-react';
+import { LayoutDashboard, AlertTriangle, Search, TrendingUp, FileText, Grid, BarChart3, CreditCard, DollarSign, Upload, Database } from 'lucide-react';
 
 interface SidebarProps {
   activeView: string;
@@ -15,6 +15,7 @@ const menuItems = [
   { id: 'heatmap', label: 'Department Heatmap', icon: Grid },
   { id: 'report', label: 'Executive Report', icon: BarChart3 },
   { id: 'divider', label: '', icon: null },
+  { id: 'upload', label: 'Upload Dataset', icon: Database },
   { id: 'import', label: 'Import Real Data', icon: Upload },
   { id: 'subscription', label: 'Subscription & Billing', icon: CreditCard },
   { id: 'pricing', label: 'Upgrade Plan', icon: DollarSign }

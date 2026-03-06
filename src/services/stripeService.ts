@@ -11,7 +11,8 @@ let stripePromise: Promise<Stripe | null>;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key_here';
+    // @ts-ignore - Vite env types
+    const key = (import.meta.env?.VITE_STRIPE_PUBLISHABLE_KEY as string) || 'pk_test_your_key_here';
     stripePromise = loadStripe(key);
   }
   return stripePromise;
@@ -58,6 +59,7 @@ export async function redirectToCheckout(
     const { sessionId } = await createCheckoutSession(plan, billingInterval, companyEmail);
 
     // Redirect to Stripe Checkout
+    // @ts-ignore - redirectToCheckout exists in Stripe.js but not in types
     const { error } = await stripe.redirectToCheckout({ sessionId });
 
     if (error) {
