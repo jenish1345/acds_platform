@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 import { Header } from './components/Layout/Header';
 import { Sidebar } from './components/Layout/Sidebar';
 import { LoginView } from './views/LoginView';
@@ -6,7 +7,7 @@ import { SignupView, SignupData } from './views/SignupView';
 import { PricingView } from './views/PricingView';
 import { SubscriptionView } from './views/SubscriptionView';
 import { DataImportView } from './views/DataImportView';
-import { DataUploadView } from './views/DataUploadView';
+import { DataUploadViewEnhanced } from './views/DataUploadViewEnhanced';
 import { DashboardView } from './views/DashboardView';
 import { AlertsView } from './views/AlertsView';
 import { AnalysisView } from './views/AnalysisView';
@@ -246,47 +247,71 @@ function App() {
 
   // Main Application
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header user={mockUser} onLogout={handleLogout} />
-      <div className="flex flex-1">
-        <Sidebar activeView={activeView} onNavigate={handleNavigate} />
-        <main className="flex-1 p-8 bg-gray-50 overflow-auto">
-          <div className="max-w-7xl mx-auto">
-            {activeView === 'dashboard' && (
-              <DashboardView 
-                onNavigate={handleNavigate}
-                currentDataset={currentDataset || undefined}
-                comparisonData={comparisonData || undefined}
-                dynamicKPIs={dynamicKPIs}
-                dynamicAlerts={dynamicAlerts}
-                dynamicHealth={dynamicHealth}
-                predictiveInsights={predictiveInsights}
-                predictedLoss={predictedLoss}
-                riskProbability={riskProbability}
-                vulnerableDepartment={vulnerableDepartment}
-                aiConfidence={aiConfidence}
-                comparisonMode={comparisonMode}
-              />
-            )}
-            {activeView === 'alerts' && <AlertsView onNavigate={handleNavigate} />}
-            {activeView === 'analysis' && <AnalysisView selectedAlertId={selectedAlertId} onNavigate={handleNavigate} />}
-            {activeView === 'impact' && <ImpactView onNavigate={handleNavigate} />}
-            {activeView === 'recommendations' && <RecommendationsView />}
-            {activeView === 'heatmap' && <HeatmapView />}
-            {activeView === 'report' && <ReportView />}
-            {activeView === 'import' && <DataImportView />}
-            {activeView === 'upload' && (
-              <DataUploadView 
-                onDatasetUploaded={handleDatasetUploaded}
-                existingDatasets={datasets.map(ds => ds.metadata)}
-              />
-            )}
-            {activeView === 'subscription' && <SubscriptionView />}
-            {activeView === 'pricing' && <PricingView onSelectPlan={handleSelectPlan} />}
-          </div>
-        </main>
+    <>
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#1e40af',
+            color: '#fff',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
+      <div className="min-h-screen flex flex-col">
+        <Header user={mockUser} onLogout={handleLogout} />
+        <div className="flex flex-1">
+          <Sidebar activeView={activeView} onNavigate={handleNavigate} />
+          <main className="flex-1 p-8 bg-gray-50 overflow-auto">
+            <div className="max-w-7xl mx-auto">
+              {activeView === 'dashboard' && (
+                <DashboardView 
+                  onNavigate={handleNavigate}
+                  currentDataset={currentDataset || undefined}
+                  comparisonData={comparisonData || undefined}
+                  dynamicKPIs={dynamicKPIs}
+                  dynamicAlerts={dynamicAlerts}
+                  dynamicHealth={dynamicHealth}
+                  predictiveInsights={predictiveInsights}
+                  predictedLoss={predictedLoss}
+                  riskProbability={riskProbability}
+                  vulnerableDepartment={vulnerableDepartment}
+                  aiConfidence={aiConfidence}
+                  comparisonMode={comparisonMode}
+                />
+              )}
+              {activeView === 'alerts' && <AlertsView onNavigate={handleNavigate} />}
+              {activeView === 'analysis' && <AnalysisView selectedAlertId={selectedAlertId} onNavigate={handleNavigate} />}
+              {activeView === 'impact' && <ImpactView onNavigate={handleNavigate} />}
+              {activeView === 'recommendations' && <RecommendationsView />}
+              {activeView === 'heatmap' && <HeatmapView />}
+              {activeView === 'report' && <ReportView />}
+              {activeView === 'import' && <DataImportView />}
+              {activeView === 'upload' && (
+                <DataUploadViewEnhanced 
+                  onDatasetUploaded={handleDatasetUploaded}
+                  existingDatasets={datasets.map(ds => ds.metadata)}
+                />
+              )}
+              {activeView === 'subscription' && <SubscriptionView />}
+              {activeView === 'pricing' && <PricingView onSelectPlan={handleSelectPlan} />}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

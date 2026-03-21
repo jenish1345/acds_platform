@@ -1,10 +1,13 @@
 import React from 'react';
+import { Download } from 'lucide-react';
 import { HealthScore } from '../components/Dashboard/HealthScore';
 import { KPICard } from '../components/Dashboard/KPICard';
 import { AlertCard } from '../components/Alerts/AlertCard';
 import { AIInsightsCard } from '../components/Dashboard/AIInsightsCard';
 import { ComparisonView } from '../components/Dashboard/ComparisonView';
 import { companyHealth, kpis, alerts } from '../data/mockData';
+import { exportToPDF } from '../utils/pdfExport';
+import toast from 'react-hot-toast';
 import type { Dataset, DatasetComparison, PredictiveInsight } from '../types/dataset';
 import type { Alert, KPI, CompanyHealth } from '../types';
 
@@ -43,15 +46,53 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const displayAlerts = dynamicAlerts || alerts;
   const hasAIData = currentDataset && predictiveInsights.length > 0;
 
+  const handleExportPDF = () => {
+    toast.loading('Generating PDF report...');
+    
+    try {
+      exportToPDF({
+        companyName: currentDataset?.metadata.name || 'Company Dashboard',
+        reportDate: new Date().toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        }),
+        health: displayHealth,
+        kpis: displayKPIs,
+        alerts: displayAlerts,
+        insights: predictiveInsights,
+        predictedLoss,
+        riskProbability,
+        vulnerableDepartment
+      });
+      
+      toast.dismiss();
+      toast.success('PDF report downloaded successfully!');
+    } catch (error) {
+      toast.dismiss();
+      toast.error('Failed to generate PDF report');
+      console.error('PDF export error:', error);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">Executive Dashboard</h1>
-        <p className="text-sm text-gray-600">
-          {currentDataset 
-            ? `AI-powered insights from ${currentDataset.metadata.name}` 
-            : 'Real-time company health and risk monitoring'}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Executive Dashboard</h1>
+          <p className="text-sm text-gray-600">
+            {currentDataset 
+              ? `AI-powered insights from ${currentDataset.metadata.name}` 
+              : 'Real-time company health and risk monitoring'}
+          </p>
+        </div>
+        <button
+          onClick={handleExportPDF}
+          className="flex items-center px-4 py-2 bg-corporate-navy text-white rounded-lg hover:bg-corporate-darkblue transition-colors"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Export PDF
+        </button>
       </div>
 
       {/* Comparison Mode */}
