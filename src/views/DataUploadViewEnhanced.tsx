@@ -3,20 +3,26 @@ import { Upload, FileSpreadsheet, CheckCircle, AlertCircle, TrendingUp, Database
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
-import type { Dataset, DatasetMetadata, ColumnMappings } from '../types/dataset';
+import { useDatasetStore } from '../store/datasetStore';
+import { useUploadDataset } from '../hooks/useDatasetAnalysis';
+import type { Dataset, ColumnMappings } from '../types/dataset';
 import { analyzeColumns, autoDetectMappings } from '../utils/dataProcessor';
 
 interface DataUploadViewEnhancedProps {
   onDatasetUploaded: (dataset: Dataset) => void;
-  existingDatasets: DatasetMetadata[];
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export const DataUploadViewEnhanced: React.FC<DataUploadViewEnhancedProps> = ({ 
-  onDatasetUploaded,
-  existingDatasets 
+  onDatasetUploaded
 }) => {
+  // Get existing datasets from Zustand store
+  const store = useDatasetStore();
+  const existingDatasets = store.datasets.map(ds => ds.metadata);
+  
+  // Use React Query mutation for upload
+  const uploadMutation = useUploadDataset();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingStage, setProcessingStage] = useState('');
@@ -169,17 +175,18 @@ export const DataUploadViewEnhanced: React.FC<DataUploadViewEnhancedProps> = ({
 
   const handleConfirmUpload = () => {
     if (preview) {
-      toast.loading('Analyzing dataset with AI...', { duration: 1000 });
+      // Use React Query mutation
+      uploadMutation.mutate(preview);
+      
+      // Call parent callback
       onDatasetUploaded(preview);
+      
+      // Reset form
       setPreview(null);
       setDatasetName('');
       setDatasetPeriod('');
       setManualMappings({});
       setShowManualMapping(false);
-      
-      setTimeout(() => {
-        toast.success('AI analysis complete!');
-      }, 1500);
     }
   };
 
